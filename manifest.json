@@ -1,0 +1,32 @@
+{
+  "name": "Tem Aqui Itaíba",
+  "short_name": "Tem Aqui Itaíba",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f4f7fb",
+  "theme_color": "#0D47A1",
+  "description": "Aplicativo de comércio local, Food, Feira do Troca, Feira do Gado, carrinho, pedidos e gestão de parceiros de Itaíba.",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "id": "tem-aqui-itaiba"
+}

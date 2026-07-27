@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 150" role="img" aria-labelledby="title desc">
+  <title id="title">Tem Aqui Tupanatinga</title>
+  <desc id="desc">Logo azul e verde com sacola, ponto de localização, loja e lupa.</desc>
+  <defs>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0D47A1"/><stop offset="1" stop-color="#06357e"/></linearGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8BC34A"/><stop offset="1" stop-color="#58a516"/></linearGradient>
+  </defs>
+  <g transform="translate(8 3)">
+    <path d="M52 34V23C52 9 64 0 79 0s27 9 27 23v11" fill="none" stroke="url(#green)" stroke-width="10" stroke-linecap="round"/>
+    <path d="M31 28h96l11 43H20z" fill="url(#green)"/>
+    <path d="M80 33c-38 0-68 30-68 68 0 48 68 89 68 89s68-41 68-89c0-38-30-68-68-68z" transform="scale(.75) translate(26 12)" fill="url(#blue)"/>
+    <circle cx="79" cy="83" r="42" fill="#fff"/>
+    <path d="M48 75h62l-5-19H53z" fill="#8BC34A"/>
+    <path d="M48 75h62v11H48z" fill="#fff"/>
+    <path d="M48 75h13v12H48zm26 0h13v12H74zm26 0h10v12h-10z" fill="#70b92d"/>
+    <rect x="57" y="86" width="44" height="28" rx="4" fill="#eaf4ff" stroke="#0D47A1" stroke-width="5"/>
+    <path d="M60 108c-7-8-8-16-2-22 8 5 12 11 10 19m0 0c2-10 7-16 16-19 3 9 0 17-9 22" fill="#65b52a"/>
+    <circle cx="111" cy="109" r="21" fill="#fff" stroke="#0D47A1" stroke-width="7"/>
+    <path d="M126 124l20 20" stroke="#0D47A1" stroke-width="10" stroke-linecap="round"/>
+  </g>
+  <g font-family="Arial Rounded MT Bold, Arial, sans-serif" font-weight="800">
+    <text x="175" y="76" font-size="64" fill="#0D47A1">Tem</text>
+    <text x="310" y="76" font-size="64" fill="#69b329">Aqui</text>
+    <path d="M488 19c-11 0-20 9-20 20 0 15 20 31 20 31s20-16 20-31c0-11-9-20-20-20z" fill="#0D47A1"/>
+    <circle cx="488" cy="39" r="7" fill="#fff"/>
+    <path d="M178 111h33" stroke="#69b329" stroke-width="5" stroke-linecap="round"/>
+    <text x="223" y="122" font-size="38" fill="#0D47A1" letter-spacing="1">Tupanatinga</text>
+    <path d="M487 111h40" stroke="#69b329" stroke-width="5" stroke-linecap="round"/>
+  </g>
+</svg>

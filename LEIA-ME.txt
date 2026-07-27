@@ -1,0 +1,3 @@
+TEM AQUI ITAÍBA
+Envie todos os arquivos desta pasta para a raiz de um repositório GitHub novo chamado tem-aqui-itaiba.
+Depois conecte esse repositório à Cloudflare Workers e use o comando npx wrangler deploy.

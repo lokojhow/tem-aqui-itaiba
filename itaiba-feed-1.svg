@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="700" viewBox="0 0 1400 700">
+<defs><linearGradient id="bg" x1="0" x2="1"><stop stop-color="#073f91"/><stop offset=".62" stop-color="#0d61bd"/><stop offset="1" stop-color="#1a78d2"/></linearGradient><linearGradient id="road" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#d9e3ec"/><stop offset="1" stop-color="#b9c7d4"/></linearGradient></defs>
+<rect width="1400" height="700" fill="url(#bg)"/><circle cx="1120" cy="125" r="70" fill="#ffd75a"/><path d="M0 410 Q230 250 460 410 T920 410 T1380 410 V700 H0Z" fill="#8ecf5a" opacity=".48"/>
+<g opacity=".95">
+<rect x="120" y="330" width="180" height="210" rx="10" fill="#fff"/><rect x="142" y="360" width="136" height="54" rx="6" fill="#79bf37"/><rect x="165" y="435" width="46" height="105" fill="#dcebf8"/><rect x="225" y="435" width="40" height="48" fill="#b7d8f4"/>
+<rect x="335" y="285" width="220" height="255" rx="10" fill="#f8fbff"/><path d="M320 315h250l-28-72H350Z" fill="#79bf37"/><rect x="368" y="350" width="154" height="66" rx="7" fill="#0d47a1"/><rect x="380" y="442" width="58" height="98" fill="#c9e1f6"/><rect x="458" y="442" width="50" height="45" fill="#c9e1f6"/>
+<rect x="590" y="350" width="160" height="190" rx="10" fill="#fff"/><rect x="610" y="380" width="120" height="48" rx="6" fill="#ffd43b"/><rect x="625" y="450" width="42" height="90" fill="#dcebf8"/><rect x="684" y="450" width="32" height="38" fill="#b7d8f4"/>
+<rect x="790" y="305" width="235" height="235" rx="10" fill="#f9fcff"/><path d="M775 338h265l-34-74H810Z" fill="#79bf37"/><rect x="825" y="370" width="165" height="62" rx="7" fill="#0d47a1"/><rect x="845" y="458" width="60" height="82" fill="#dcebf8"/><rect x="925" y="458" width="45" height="40" fill="#b7d8f4"/>
+</g>
+<rect y="540" width="1400" height="160" fill="url(#road)"/><path d="M0 625h1400" stroke="#fff" stroke-width="12" stroke-dasharray="75 52" opacity=".85"/>
+<g fill="#fff"><text x="74" y="112" font-family="Arial, sans-serif" font-size="58" font-weight="800">Bem-vindo ao Tem Aqui Itaíba</text><text x="78" y="168" font-family="Arial, sans-serif" font-size="27" opacity=".88">O comércio da cidade reunido em um só aplicativo.</text></g>
+</svg>
