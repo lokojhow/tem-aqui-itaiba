@@ -1,5 +1,5 @@
-/* Tem Aqui Itaíba — Service Worker V1 estável */
-const CACHE = 'tem-aqui-itaiba-v1-2026-07-27';
+/* Tem Aqui Itaíba — Service Worker V2 estável */
+const CACHE = 'tem-aqui-itaiba-v2-2026-07-27';
 const CORE = [
   './',
   './index.html',
@@ -14,8 +14,8 @@ const CORE = [
   './itaiba-feed-3.svg',
   './itaiba-feed-4.svg',
   './supabase-config.js',
-  './online.js?v=1.0',
-  './cart.js?v=1.0',
+  './online.js?v=2.0',
+  './cart.js?v=2.0',
   './heic2any.min.js',
   './categoria-beleza.webp',
   './categoria-carnes.webp',

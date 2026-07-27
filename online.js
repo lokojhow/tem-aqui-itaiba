@@ -1,4 +1,4 @@
-/* Tem Aqui Itaíba — camada online Supabase multicidade */
+/* Tem Aqui Itaíba — camada online Supabase multicidade V2 */
 (function () {
   'use strict';
 
@@ -106,7 +106,7 @@
 
   async function refreshVisitorCounter() {
     if (!onlineClient) return false;
-    const { data, error } = await onlineClient.rpc('get_public_app_lifetime_accesses_v41');
+    const { data, error } = await onlineClient.rpc('get_public_app_lifetime_accesses_city_v2', { p_city: APP_CITY });
     if (error) throw error;
     updateVisitorCounter(data, false);
     return true;
@@ -281,7 +281,7 @@
     const safeDays = [7,30,90].includes(Number(days)) ? Number(days) : 30;
     adminDashboardPeriod = safeDays;
     if (c) c.innerHTML = '<div class="admin-loading"><b>Carregando relatório...</b><p>Consultando contas e acessos.</p></div>';
-    const { data, error } = await onlineClient.rpc('admin_dashboard_summary', { period_days: safeDays });
+    const { data, error } = await onlineClient.rpc('admin_dashboard_summary_city', { period_days: safeDays, p_city: APP_CITY });
     if (error) {
       console.error(error);
       if (c) c.innerHTML = `<h2>Dashboard administrativo</h2><div class="empty">Não foi possível carregar o relatório. Execute primeiro o arquivo ETAPA-11-DASHBOARD-ADMINISTRATIVO.sql no Supabase.<br><br>${esc(normalizeError(error))}</div>`;
@@ -1964,7 +1964,7 @@
       await fetchAdminPartnerData();
       renderAdminPartnersPanel();
     } catch (error) {
-      c.innerHTML = `<div class="section-head"><div><h2>Gestão de parceiros</h2><div class="section-sub">Não foi possível abrir o painel.</div></div></div><div class="empty">${esc(normalizeError(error))}<br><br>Execute a ETAPA-20-PAINEL-DE-PARCEIROS.sql no Supabase.</div>`;
+      c.innerHTML = `<div class="section-head"><div><h2>Gestão de parceiros</h2><div class="section-sub">Não foi possível abrir o painel.</div></div></div><div class="empty">${esc(normalizeError(error))}<br><br>Execute o arquivo ETAPA-ITAIBA-V2-ATIVAR-E-SEPARAR.sql no Supabase.</div>`;
     }
   }
 
