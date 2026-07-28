@@ -1,16 +1,16 @@
-/* Tem Aqui — Service Worker V60, sem páginas administrativas embutidas */
-const CACHE = "tem-aqui-itaiba-v60-2026-07-28";
+/* Tem Aqui — Service Worker V61, sem páginas administrativas embutidas */
+const CACHE = "tem-aqui-itaiba-v61-2026-07-28";
 const CORE_ASSETS = [
   "./",
   "./index.html",
-  "./manifest.json?v=60.0",
+  "./manifest.json?v=61.0",
   "./logo.svg",
   "./icon.svg",
   "./icon-192.png",
   "./icon-512.png",
   "./supabase-config.js",
-  "./access-control.js?v=60.0",
-  "./online.js?v=60.0",
+  "./access-control.js?v=61.0",
+  "./online.js?v=61.0",
   "./cart.js?v=2.0"
 ];
 self.addEventListener('install', event => {
