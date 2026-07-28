@@ -1,83 +1,45 @@
-/* Tem Aqui Itaíba — Service Worker V2 estável */
-const CACHE = 'tem-aqui-itaiba-v2-2026-07-27';
-const CORE = [
-  './',
-  './index.html',
-  './manifest.json',
-  './logo.svg',
-  './icon.svg',
-  './icon-192.png',
-  './icon-512.png',
-  './cidade-itaiba.svg',
-  './itaiba-feed-1.svg',
-  './itaiba-feed-2.svg',
-  './itaiba-feed-3.svg',
-  './itaiba-feed-4.svg',
-  './supabase-config.js',
-  './online.js?v=2.0',
-  './cart.js?v=2.0',
-  './heic2any.min.js',
-  './categoria-beleza.webp',
-  './categoria-carnes.webp',
-  './categoria-casa.webp',
-  './categoria-eletronicos.webp',
-  './categoria-farmacia.webp',
-  './categoria-food.webp',
-  './categoria-lojas.webp',
-  './categoria-moda.webp',
-  './categoria-supermercado.webp'
+/* Tem Aqui — Service Worker V60, sem páginas administrativas embutidas */
+const CACHE = "tem-aqui-itaiba-v60-2026-07-28";
+const CORE_ASSETS = [
+  "./",
+  "./index.html",
+  "./manifest.json?v=60.0",
+  "./logo.svg",
+  "./icon.svg",
+  "./icon-192.png",
+  "./icon-512.png",
+  "./supabase-config.js",
+  "./access-control.js?v=60.0",
+  "./online.js?v=60.0",
+  "./cart.js?v=2.0"
 ];
-
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE);
-    await Promise.allSettled(CORE.map(async asset => {
-      const response = await fetch(asset, { cache: 'no-store' });
-      if (response.ok) await cache.put(asset, response);
-    }));
+    await Promise.allSettled(CORE_ASSETS.map(asset => fetch(asset, {cache:'no-store'}).then(r => r.ok ? cache.put(asset, r) : null)));
     await self.skipWaiting();
   })());
 });
-
 self.addEventListener('activate', event => {
   event.waitUntil((async () => {
-    const names = await caches.keys();
-    await Promise.all(names.filter(name => name !== CACHE).map(name => caches.delete(name)));
+    const keys = await caches.keys();
+    await Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key)));
     await self.clients.claim();
   })());
 });
-
-self.addEventListener('fetch', event => {
-  const request = event.request;
-  if (request.method !== 'GET') return;
-  const url = new URL(request.url);
-  if (url.origin !== self.location.origin) return;
-
-  if (request.mode === 'navigate') {
-    event.respondWith((async () => {
-      try {
-        const fresh = await fetch(request, { cache: 'no-store' });
-        if (fresh.ok) {
-          const cache = await caches.open(CACHE);
-          await cache.put('./index.html', fresh.clone());
-        }
-        return fresh;
-      } catch (_) {
-        return (await caches.match('./index.html')) || Response.error();
-      }
-    })());
-    return;
+async function networkFirst(request) {
+  const cache = await caches.open(CACHE);
+  try {
+    const response = await fetch(request, {cache:'no-store'});
+    if (response && response.ok) await cache.put(request, response.clone());
+    return response;
+  } catch (_) {
+    return (await cache.match(request)) || (request.mode === 'navigate' ? await cache.match('./index.html') : null) || new Response('Arquivo indisponível.', {status:503});
   }
-
-  event.respondWith((async () => {
-    const cached = await caches.match(request);
-    const network = fetch(request).then(async response => {
-      if (response.ok) {
-        const cache = await caches.open(CACHE);
-        await cache.put(request, response.clone());
-      }
-      return response;
-    }).catch(() => null);
-    return cached || (await network) || Response.error();
-  })());
+}
+self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
+  const url = new URL(event.request.url);
+  if (url.origin !== self.location.origin) return;
+  event.respondWith(networkFirst(event.request));
 });

@@ -959,6 +959,7 @@
   async function refreshOnline() {
     await loadCurrentUser();
     updateAuthUI();
+    if (!onlineSession) return;
     await loadPublicData();
     await loadChats();
     await loadNotifications();
@@ -978,6 +979,14 @@
     if (moderationButton) moderationButton.style.display = onlineSession && isAdmin() ? '' : 'none';
     const homeAdsButton = document.getElementById('homeAdsButton');
     if (homeAdsButton) homeAdsButton.style.display = onlineSession && (isAdmin() || isPartner()) ? '' : 'none';
+    window.temAquiPermissions = {
+      isAdmin: !!(onlineSession && isAdmin()),
+      isPartner: !!(onlineSession && isPartner()),
+      userId: currentUserId(),
+      storeId: onlineStore?.id || null,
+      storeName: onlineStore?.name || null
+    };
+    window.dispatchEvent(new CustomEvent('tem-aqui-permissions-updated', { detail: window.temAquiPermissions }));
     const notice = document.querySelector('.notice-inner span');
     if (notice) {
       notice.innerHTML = onlineSession
@@ -2705,9 +2714,12 @@
       toast('A biblioteca do banco online não carregou. Verifique a internet.');
       return;
     }
-    onlineClient = window.supabase.createClient(cfg.url, cfg.publishableKey, {
+    onlineClient = window.temAquiAccessClient || window.supabase.createClient(cfg.url, cfg.publishableKey, {
       auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
     });
+    if (!window.TEM_AQUI_ACCESS_GRANTED) {
+      await new Promise(resolve => window.addEventListener('tem-aqui-access-granted', resolve, { once: true }));
+    }
     const { data } = await onlineClient.auth.getSession();
     onlineSession = data.session;
     await refreshOnline();
@@ -2717,6 +2729,13 @@
     subscribeToMessages();
     onlineClient.auth.onAuthStateChange(async (_event, session) => {
       onlineSession = session;
+      if (!session) {
+        await loadCurrentUser();
+        updateAuthUI();
+        subscribeToMessages();
+        return;
+      }
+      if (!window.TEM_AQUI_ACCESS_GRANTED) return;
       await refreshOnline();
       subscribeToMessages();
       if (session && pendingModalAfterAuth) {
