@@ -2006,7 +2006,7 @@
 
   function adminPartnersTable(rows, finance = false) {
     if (!rows.length) return '<div class="admin-partner-empty">Nenhum parceiro encontrado com os filtros informados.</div>';
-    return `<div class="admin-partner-table-wrap"><table class="admin-partner-table"><thead><tr><th>Parceiro</th><th>Segmento</th><th>Mensalidade</th><th>Status</th><th>Pagamento</th><th>Vencimento</th><th>Produtos</th><th>Ações</th></tr></thead><tbody>${rows.map(row => `<tr><td><div class="admin-partner-store"><b>${esc(row.store_name)}</b><small>${esc(row.responsible_name || 'Responsável não informado')} • ${esc(row.whatsapp || row.email || 'Sem contato')}</small></div></td><td>${esc(row.category || 'Outros')}</td><td><b>${money(Number(row.monthly_fee || 0))}</b></td><td>${partnerBadge(row.partner_status)}</td><td>${partnerBadge(row.payment_status,'payment')}</td><td>${partnerDate(row.next_due_date)}</td><td>${Number(row.products_count || 0)}</td><td><div class="admin-partner-row-actions"><button class="btn btn-primary" onclick="enterAdminPartnerStore('${row.id}')">Gerenciar loja</button>${finance ? `<button class="btn btn-primary" onclick="openAdminPartnerPayment('${row.id}')">Registrar pagamento</button>` : `<button class="btn btn-soft" onclick="openAdminPartnerForm('${row.id}')">Editar</button><button class="btn ${row.partner_status==='blocked'?'btn-primary':'btn-danger'}" onclick="quickAdminPartnerStatus('${row.id}','${row.partner_status==='blocked'?'approved':'blocked'}')">${row.partner_status==='blocked'?'Desbloquear':'Bloquear'}</button>`}</div></td></tr>`).join('')}</tbody></table></div>`;
+    return `<div class="admin-partner-table-wrap"><table class="admin-partner-table"><thead><tr><th>Parceiro</th><th>Segmento</th><th>Mensalidade</th><th>Status</th><th>Pagamento</th><th>Vencimento</th><th>Produtos</th><th>Ações</th></tr></thead><tbody>${rows.map(row => `<tr><td><div class="admin-partner-store"><b>${esc(row.store_name)}</b><small>${esc(row.responsible_name || 'Responsável não informado')} • ${esc(row.whatsapp || row.email || 'Sem contato')}</small></div></td><td>${esc(row.category || 'Outros')}</td><td><b>${money(Number(row.monthly_fee || 0))}</b></td><td>${partnerBadge(row.partner_status)}</td><td>${partnerBadge(row.payment_status,'payment')}</td><td>${partnerDate(row.next_due_date)}</td><td>${Number(row.products_count || 0)}</td><td><div class="admin-partner-row-actions"><button class="btn btn-primary" onclick="enterAdminPartnerStore('${row.id}')">Gerenciar loja</button>${finance ? `<button class="btn btn-primary" onclick="openAdminPartnerPayment('${row.id}')">Registrar pagamento</button>` : `<button class="btn btn-soft" onclick="openAdminPartnerForm('${row.id}')">Editar</button><button class="btn ${row.partner_status==='blocked'?'btn-primary':'btn-danger'}" onclick="quickAdminPartnerStatus('${row.id}','${row.partner_status==='blocked'?'approved':'blocked'}')">${row.partner_status==='blocked'?'Desbloquear':'Bloquear'}</button><button class="btn btn-danger" onclick="deleteAdminPartner('${row.id}')">Excluir</button>`}</div></td></tr>`).join('')}</tbody></table></div>`;
   }
 
   function renderAdminPartnersPanel() {
@@ -2129,6 +2129,25 @@
       renderHome();
       renderAdminPartnersPanel();
       toast(status === 'blocked' ? 'Parceiro bloqueado.' : 'Parceiro desbloqueado.');
+    } catch (error) { toast(normalizeError(error)); }
+  };
+
+  window.deleteAdminPartner = async function (storeId) {
+    if (!isAdmin()) return;
+    const row = adminPartnerData.partners.find(item => String(item.id) === String(storeId));
+    if (!row) return;
+    const name = prompt('Para excluir o parceiro e preservar o histórico, digite o nome da loja: ' + row.store_name);
+    if (name === null) return;
+    if (name.trim().toLowerCase() !== String(row.store_name).trim().toLowerCase()) { toast('O nome da loja não confere.'); return; }
+    try {
+      const { data, error } = await onlineClient.rpc('admin_delete_store_v72', {p_store_id:storeId,p_confirmation_name:name});
+      if (error) throw error;
+      if (data !== true) throw new Error('Exclusão não confirmada pelo servidor.');
+      await fetchAdminPartnerData();
+      await loadPublicData();
+      renderHome();
+      renderAdminPartnersPanel();
+      toast('Parceiro excluído.');
     } catch (error) { toast(normalizeError(error)); }
   };
 
