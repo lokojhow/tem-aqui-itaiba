@@ -2136,9 +2136,19 @@
     if (!isAdmin()) return;
     const row = adminPartnerData.partners.find(item => String(item.id) === String(storeId));
     if (!row) return;
-    const name = prompt('Para excluir o parceiro e preservar o histórico, digite o nome da loja: ' + row.store_name);
-    if (name === null) return;
-    if (name.trim().toLowerCase() !== String(row.store_name).trim().toLowerCase()) { toast('O nome da loja não confere.'); return; }
+    const accepted = await new Promise(resolve => {
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;inset:0;z-index:2147483647;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:20px';
+      overlay.innerHTML = '<div role="alertdialog" aria-modal="true" aria-labelledby="partnerDeleteTitle" style="background:#fff;color:#17324d;border-radius:18px;padding:24px;width:100%;max-width:380px;box-shadow:0 16px 48px #0003"><h3 id="partnerDeleteTitle" style="margin:0 0 12px;color:#0D47A1">Excluir parceiro?</h3><p style="margin:0 0 10px">Deseja excluir este parceiro?</p><strong data-store></strong><p style="font-size:14px;margin:12px 0 20px">A loja será removida e o responsável continuará com sua conta de cliente.</p><div style="display:flex;gap:12px"><button type="button" data-no class="btn btn-soft" style="flex:1">Não</button><button type="button" data-yes class="btn btn-danger" style="flex:1;background:#b91c1c;color:white">Sim, excluir</button></div></div>';
+      overlay.querySelector('[data-store]').textContent = row.store_name;
+      const finish = value => { overlay.remove(); resolve(value); };
+      overlay.querySelector('[data-no]').onclick = () => finish(false);
+      overlay.querySelector('[data-yes]').onclick = () => finish(true);
+      document.body.appendChild(overlay);
+      overlay.querySelector('[data-no]').focus();
+    });
+    if (!accepted) return;
+    const name = row.store_name;
     try {
       const { data, error } = await onlineClient.rpc('admin_delete_store_v72', {p_store_id:storeId,p_confirmation_name:name});
       if (error) throw error;
