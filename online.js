@@ -743,6 +743,10 @@
         logoUrl: s.logo_url || '',
         bannerUrl: s.banner_url || '',
         storefrontTitle: s.storefront_title || s.name,
+        categoryCards: s.storefront_category_cards || [],
+        primaryColor: s.storefront_primary_color,
+        secondaryColor: s.storefront_secondary_color,
+        textColor: s.storefront_text_color,
         rating: s.featured ? 'Destaque' : 'Novo',
         address: [s.address, s.neighborhood, s.city].filter(Boolean).join(', '),
         whatsapp: s.whatsapp,
@@ -2229,6 +2233,7 @@
     finally { setBusy(button,false); }
   };
 
+  window.getPartnerLayoutBanners=async function(id){const {data,error}=await onlineClient.from('storefront_banners').select('placement,image_url,sort_order').eq('store_id',id).eq('active',true).order('sort_order');if(error)throw error;return data||[];};
   window.editAdminStoreLayout = async function(id) {
     if (!isAdmin()) return toast('Acesso restrito.');
     const {data:store,error} = await onlineClient.from('stores').select('*').eq('id',id).is('deleted_at',null).single();
@@ -2237,6 +2242,13 @@
     const fields=[['name','Nome da loja'],['storefront_title','Título da vitrine'],['storefront_subtitle','Subtítulo'],['storefront_description','Descrição']];
     const colors=[['storefront_primary_color','Cor principal'],['storefront_secondary_color','Cor secundária'],['storefront_accent_color','Cor de destaque'],['storefront_text_color','Cor do texto']];
     c.innerHTML='<button class="btn btn-soft" id="layoutBack">Voltar</button><h2>Editar loja e layout</h2><form id="adminLayoutForm">'+fields.map(([k,l])=>'<div class="field"><label>'+l+'</label><input name="'+k+'" value="'+esc(store[k]||'')+'"></div>').join('')+colors.map(([k,l])=>'<div class="field"><label>'+l+'</label><input name="'+k+'" type="color" value="'+(/^#[0-9a-f]{6}$/i.test(store[k]||'')?store[k]:'#0d47a1')+'"></div>').join('')+['logo_url','banner_url'].map((k,i)=>'<div class="field"><label>'+ (i?'Banner':'Logo')+'</label>'+ (store[k]?'<img src="'+esc(store[k])+'" style="max-width:100%;max-height:160px;object-fit:contain">':'')+'<input name="'+k+'" type="file" accept="image/*"></div>').join('')+'<button class="btn btn-primary" type="submit">Salvar layout</button></form>';
+    const formLayout=document.getElementById('adminLayoutForm');
+    const extras=document.createElement('div');extras.innerHTML='<h3>Categorias e banners promocionais</h3><div id="layoutCategories"></div><button type="button" class="btn btn-soft" id="addLayoutCategory">Adicionar categoria</button>';
+    formLayout.insertBefore(extras,formLayout.querySelector('button[type=submit]'));
+    const cards=Array.isArray(store.storefront_category_cards)?store.storefront_category_cards:[];
+    const addCard=(card={})=>{const row=document.createElement('div');row.className='field layout-category';row.dataset.image=card.image_url||'';row.innerHTML='<label>Categoria</label><input class="category-name" value="'+esc(card.name||'')+'">'+(card.image_url?'<img src="'+esc(card.image_url)+'" style="max-width:90px">':'')+'<input type="file" accept="image/*"><button type="button" class="btn btn-soft">Remover categoria</button>';row.querySelector('button').onclick=()=>row.remove();extras.querySelector('#layoutCategories').appendChild(row);};cards.forEach(addCard);extras.querySelector('#addLayoutCategory').onclick=()=>addCard();
+    const {data:bannerRows,error:bannerError}=await onlineClient.from('storefront_banners').select('*').eq('store_id',id).order('sort_order');if(bannerError){toast(normalizeError(bannerError));return;}
+    const banners=document.createElement('div');extras.appendChild(banners);for(const n of [3,6,9,12,15,18]){const b=(bannerRows||[]).find(x=>x.placement==='after_'+n);const row=document.createElement('div');row.className='field layout-banner';row.dataset.position=n;row.dataset.id=b?.id||'';row.innerHTML='<label>Banner após '+n+' categorias</label>'+(b?.image_url?'<img src="'+esc(b.image_url)+'" style="width:100%;max-height:140px;object-fit:contain">':'')+'<input type="file" accept="image/*">';banners.appendChild(row);}
     document.getElementById('layoutBack').onclick=()=>loadAdminPartnersPanel();
     document.getElementById('adminLayoutForm').onsubmit=async e=>{
       e.preventDefault(); if(!isAdmin()) return;
@@ -2245,6 +2257,8 @@
         const payload={};for(const [k] of fields.concat(colors))payload[k]=form.elements[k].value.trim();
         if(!payload.name)throw Error('Informe o nome da loja.');
         for(const k of ['logo_url','banner_url']){const file=form.elements[k].files[0];if(file){if(!file.type.startsWith('image/'))throw Error('Selecione uma imagem.');payload[k]=(await uploadPublicMedia(file)).url;}}
+        payload.storefront_category_cards=[];for(const row of extras.querySelectorAll('.layout-category')){const name=row.querySelector('.category-name').value.trim();if(!name)continue;const file=row.querySelector('input[type=file]').files[0];payload.storefront_category_cards.push({name,image_url:file?(await uploadPublicMedia(file)).url:row.dataset.image});}
+        for(const row of extras.querySelectorAll('.layout-banner')){const file=row.querySelector('input').files[0];if(!file)continue;const image_url=(await uploadPublicMedia(file)).url;const data={store_id:id,placement:'after_'+row.dataset.position,image_url,active:true,sort_order:Number(row.dataset.position)};const result=await (row.dataset.id?onlineClient.from('storefront_banners').update(data).eq('id',row.dataset.id).eq('store_id',id):onlineClient.from('storefront_banners').insert(data));if(result.error)throw result.error;}
         const {error}=await onlineClient.from('stores').update(payload).eq('id',id).is('deleted_at',null).select('id').single();
         if(error)throw error;
         await loadPublicData();toast('Layout salvo.');await window.editAdminStoreLayout(id);
