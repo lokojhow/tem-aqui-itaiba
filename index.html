@@ -351,7 +351,7 @@ body{background:#fff}
 #app .bottom-nav button[data-bottom="cart"] b{display:grid;place-items:center;background:#438c0f;color:#fff;border-radius:50%;width:48px;height:48px;margin-top:-18px;box-shadow:0 5px 12px #438c0f44}
 }
 </style>
-</head>
+<style>.food-fixed-offer{margin:18px 18px 22px;display:flex;justify-content:center}.food-fixed-art{width:min(100%,370px);position:relative;overflow:hidden;border-radius:20px;box-shadow:0 8px 25px #082d4a20;line-height:0}.food-fixed-art img{width:100%;height:auto;display:block}.food-fixed-art button{position:absolute;bottom:2%;left:13%;width:74%;height:17%;border:0;background:transparent;cursor:pointer}.food-fixed-art button:focus-visible{outline:3px solid #fff;outline-offset:-4px}@media(min-width:800px){.food-fixed-offer{margin:20px auto 28px}}</style></head>
 <body class="auth-locked" data-app-name="Tem Aqui Itaíba" data-city="Itaíba">
 
 <div id="temAquiExternalBrowserGate" aria-modal="true" role="dialog">
@@ -486,6 +486,7 @@ body{background:#fff}
       </section>
 
       <section class="marketplace-categories" aria-label="Categorias"><button type="button" onclick="selectHomeRailCategory('Mercado',event)"><span><img src="categoria-supermercado.webp" alt=""></span>Supermercado</button><button type="button" onclick="navigate('food')"><span><img src="categoria-food.webp" alt=""></span>Alimentação</button><button type="button" onclick="selectHomeRailCategory('Moda e Calçados',event)"><span><img src="categoria-moda.webp" alt=""></span>Moda</button><button type="button" onclick="selectHomeRailCategory('Eletrônicos',event)"><span><img src="categoria-eletronicos.webp" alt=""></span>Eletrônicos</button><button type="button" onclick="selectHomeRailCategory('Perfumaria e Beleza',event)"><span><img src="categoria-beleza.webp" alt=""></span>Beleza</button><button type="button" onclick="selectHomeRailCategory('Farmácia',event)"><span><img src="categoria-farmacia.webp" alt=""></span>Farmácia</button><button type="button" onclick="selectHomeRailCategory('Casa e Decoração',event)"><span><img src="categoria-casa.webp" alt=""></span>Casa</button><button type="button" onclick="selectHomeRailCategory('Frigoríficos e Açougues',event)"><span><img src="categoria-carnes.webp" alt=""></span>Carnes</button><button type="button" onclick="toggleHomeCategoryRail(event)"><span>▦</span>Mais categorias</button></section>
+      <section class="food-fixed-offer" aria-label="Promoção de cadastro Tem Aqui Food"><div class="food-fixed-art"><img src="https://izbkcdimyfoxikpzefba.supabase.co/storage/v1/object/public/tem-aqui-public/food-promo-2026.png" alt="Tem Aqui Food: dois meses gratuitos para cadastrar seu delivery" loading="lazy"><button type="button" aria-label="Cadastrar meu estabelecimento no Tem Aqui Food" onclick="window.openFoodRegistration()"></button></div></section>
       <section id="homeFlashPromotion" class="home-flash-promotion" aria-label="Oferta com contagem regressiva"></section>
 
       <section class="modern-shortcuts" aria-label="Atalhos da página inicial">
