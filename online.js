@@ -751,6 +751,7 @@
         address: [s.address, s.neighborhood, s.city].filter(Boolean).join(', '),
         whatsapp: s.whatsapp,
         foodEnabled: !!s.food_enabled,
+        foodOnly: !!s.food_self_registered && s.partner_plan_code === 'sabor_basic',
         foodType: s.food_type || '',
         foodMinimumOrder: Number(s.food_minimum_order || 0),
         foodAcceptingOrders: s.food_accepting_orders !== false,
