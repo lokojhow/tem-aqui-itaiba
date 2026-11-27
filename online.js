@@ -2006,7 +2006,7 @@
 
   function adminPartnersTable(rows, finance = false) {
     if (!rows.length) return '<div class="admin-partner-empty">Nenhum parceiro encontrado com os filtros informados.</div>';
-    return `<div class="admin-partner-table-wrap"><table class="admin-partner-table"><thead><tr><th>Parceiro</th><th>Segmento</th><th>Mensalidade</th><th>Status</th><th>Pagamento</th><th>Vencimento</th><th>Produtos</th><th>Ações</th></tr></thead><tbody>${rows.map(row => `<tr><td><div class="admin-partner-store"><b>${esc(row.store_name)}</b><small>${esc(row.responsible_name || 'Responsável não informado')} • ${esc(row.whatsapp || row.email || 'Sem contato')}</small></div></td><td>${esc(row.category || 'Outros')}</td><td><b>${money(Number(row.monthly_fee || 0))}</b></td><td>${partnerBadge(row.partner_status)}</td><td>${partnerBadge(row.payment_status,'payment')}</td><td>${partnerDate(row.next_due_date)}</td><td>${Number(row.products_count || 0)}</td><td><div class="admin-partner-row-actions"><button class="btn btn-primary" onclick="enterAdminPartnerStore('${row.id}')">Gerenciar loja</button>${finance ? `<button class="btn btn-primary" onclick="openAdminPartnerPayment('${row.id}')">Registrar pagamento</button>` : `<button class="btn btn-soft" onclick="openAdminPartnerForm('${row.id}')">Editar</button><button class="btn ${row.partner_status==='blocked'?'btn-primary':'btn-danger'}" onclick="quickAdminPartnerStatus('${row.id}','${row.partner_status==='blocked'?'approved':'blocked'}')">${row.partner_status==='blocked'?'Desbloquear':'Bloquear'}</button><button class="btn btn-danger" onclick="deleteAdminPartner('${row.id}')">Excluir</button>`}</div></td></tr>`).join('')}</tbody></table></div>`;
+    return `<div class="admin-partner-table-wrap"><table class="admin-partner-table"><thead><tr><th>Parceiro</th><th>Segmento</th><th>Mensalidade</th><th>Status</th><th>Pagamento</th><th>Vencimento</th><th>Produtos</th><th>Ações</th></tr></thead><tbody>${rows.map(row => `<tr><td><div class="admin-partner-store"><b>${esc(row.store_name)}</b><small>${esc(row.responsible_name || 'Responsável não informado')} • ${esc(row.whatsapp || row.email || 'Sem contato')}</small></div></td><td>${esc(row.category || 'Outros')}</td><td><b>${money(Number(row.monthly_fee || 0))}</b></td><td>${partnerBadge(row.partner_status)}</td><td>${partnerBadge(row.payment_status,'payment')}</td><td>${partnerDate(row.next_due_date)}</td><td>${Number(row.products_count || 0)}</td><td><div class="admin-partner-row-actions"><button class="btn btn-primary" onclick="enterAdminPartnerStore('${row.id}')">Gerenciar loja</button><button class="btn btn-soft" onclick="editAdminStoreLayout('${row.id}')">Editar loja e layout</button>${finance ? `<button class="btn btn-primary" onclick="openAdminPartnerPayment('${row.id}')">Registrar pagamento</button>` : `<button class="btn btn-soft" onclick="openAdminPartnerForm('${row.id}')">Editar</button><button class="btn ${row.partner_status==='blocked'?'btn-primary':'btn-danger'}" onclick="quickAdminPartnerStatus('${row.id}','${row.partner_status==='blocked'?'approved':'blocked'}')">${row.partner_status==='blocked'?'Desbloquear':'Bloquear'}</button><button class="btn btn-danger" onclick="deleteAdminPartner('${row.id}')">Excluir</button>`}</div></td></tr>`).join('')}</tbody></table></div>`;
   }
 
   function renderAdminPartnersPanel() {
@@ -2226,6 +2226,28 @@
     finally { setBusy(button,false); }
   };
 
+  window.editAdminStoreLayout = async function(id) {
+    if (!isAdmin()) return toast('Acesso restrito.');
+    const {data:store,error} = await onlineClient.from('stores').select('*').eq('id',id).is('deleted_at',null).single();
+    if(error) return toast(normalizeError(error));
+    const c=document.getElementById('accountContent');
+    const fields=[['name','Nome da loja'],['storefront_title','Título da vitrine'],['storefront_subtitle','Subtítulo'],['storefront_description','Descrição']];
+    const colors=[['storefront_primary_color','Cor principal'],['storefront_secondary_color','Cor secundária'],['storefront_accent_color','Cor de destaque'],['storefront_text_color','Cor do texto']];
+    c.innerHTML='<button class="btn btn-soft" id="layoutBack">Voltar</button><h2>Editar loja e layout</h2><form id="adminLayoutForm">'+fields.map(([k,l])=>'<div class="field"><label>'+l+'</label><input name="'+k+'" value="'+esc(store[k]||'')+'"></div>').join('')+colors.map(([k,l])=>'<div class="field"><label>'+l+'</label><input name="'+k+'" type="color" value="'+(/^#[0-9a-f]{6}$/i.test(store[k]||'')?store[k]:'#0d47a1')+'"></div>').join('')+['logo_url','banner_url'].map((k,i)=>'<div class="field"><label>'+ (i?'Banner':'Logo')+'</label>'+ (store[k]?'<img src="'+esc(store[k])+'" style="max-width:100%;max-height:160px;object-fit:contain">':'')+'<input name="'+k+'" type="file" accept="image/*"></div>').join('')+'<button class="btn btn-primary" type="submit">Salvar layout</button></form>';
+    document.getElementById('layoutBack').onclick=()=>loadAdminPartnersPanel();
+    document.getElementById('adminLayoutForm').onsubmit=async e=>{
+      e.preventDefault(); if(!isAdmin()) return;
+      const form=e.currentTarget,btn=form.querySelector('button[type=submit]');btn.disabled=true;
+      try {
+        const payload={};for(const [k] of fields.concat(colors))payload[k]=form.elements[k].value.trim();
+        if(!payload.name)throw Error('Informe o nome da loja.');
+        for(const k of ['logo_url','banner_url']){const file=form.elements[k].files[0];if(file){if(!file.type.startsWith('image/'))throw Error('Selecione uma imagem.');payload[k]=(await uploadPublicMedia(file)).url;}}
+        const {error}=await onlineClient.from('stores').update(payload).eq('id',id).is('deleted_at',null).select('id').single();
+        if(error)throw error;
+        await loadPublicData();toast('Layout salvo.');await window.editAdminStoreLayout(id);
+      }catch(error){toast(normalizeError(error));}finally{btn.disabled=false;}
+    };
+  };
   window.enterAdminPartnerStore = function (storeId) {
     const row = adminPartnerData.partners.find(item => String(item.id) === String(storeId));
     if (!row) return toast('Parceiro não encontrado.');
