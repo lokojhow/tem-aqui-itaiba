@@ -296,6 +296,61 @@ body.auth-locked #app{visibility:hidden;pointer-events:none;user-select:none}
 #temAquiOpenChromeHelp{margin-top:13px;color:#6a7787;font-size:12px;line-height:1.35}
 </style>
 
+<style id="temAquiMarketplaceLayout">
+body{background:#fff}
+#app .header{background:#fff;box-shadow:0 3px 14px #0d47a10b}
+#app .topbar{gap:10px}
+#app .modern-home-shell{display:flex;flex-direction:column;gap:0}
+#app .modern-home-content{width:100%;padding-left:0;display:flex;flex-direction:column}
+#app .home-category-rail{display:none}
+#app .home-category-rail.open{display:block;position:fixed;top:100px;left:12px;width:min(260px,90vw);z-index:100}
+#app .modern-home-search{background:#eef5fb;border:0;box-shadow:none;border-radius:24px}
+#app .modern-home-search input{background:transparent}
+#app .modern-banner-section{order:1}
+#app .marketplace-categories{order:2;display:flex;gap:12px;overflow-x:auto;padding:16px 2px 8px;scrollbar-width:thin}
+.marketplace-categories button{flex:1 0 84px;min-width:84px;max-width:145px;border:0;background:transparent;color:#14243e;font-weight:800;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center}
+.marketplace-categories button span{display:grid;place-items:center;width:64px;height:58px;border-radius:16px;background:#e8f4df;color:#438c0f;font-size:28px}
+.marketplace-categories button:nth-child(even) span{background:#e7f1ff;color:#0d47a1}
+.marketplace-categories img{width:44px;height:44px;object-fit:contain}
+#app .modern-shortcuts{order:3}
+#app .home-flash-promotion{order:4}
+#app .modern-home-content>.section:not(.modern-banner-section){order:5}
+#app #featuredStoresSection{order:6}
+#app .section h2{font-weight:900;color:#0d3477}
+#app .see-all{color:#397c13}
+#app #view-home .product-card{border-radius:16px;background:#fff;box-shadow:0 4px 15px #102a4310}
+#app #view-home .product-media{background:#fff}
+#app #view-home .price{color:#397c13}
+#app #view-home .product-card .btn-primary{background:#438c0f;border-radius:999px}
+#app #view-home .modern-shop-grid .shop{background:#f3f9ef;border-radius:15px}
+@media(max-width:820px){
+#app main{padding:10px 12px 100px}
+#app .topbar{flex-wrap:wrap;justify-content:space-between;padding:8px 12px}
+#app .topbar .settings-menu-button{display:inline-flex!important;margin:0}
+#app .topbar .brand{flex:1;min-width:105px}
+#app .topbar .brand img{width:145px;max-width:100%}
+#app .topbar .notification-badge-wrap{display:inline-flex!important}
+#app .topbar .icon-btn{width:34px;height:34px;flex-shrink:0}
+#app .modern-home-search{margin-bottom:10px}
+#app .modern-main-carousel{min-height:0!important;height:auto;aspect-ratio:2.3/1;border-radius:18px}
+#app .modern-main-carousel .campaign-slide,#app .modern-main-carousel .campaign-empty{min-height:0!important;height:100%}
+#app .modern-main-carousel .campaign-copy{padding:12px 28px 18px}
+#app .modern-main-carousel .campaign-copy h3{font-size:clamp(16px,4.5vw,26px)}
+#app .modern-main-carousel .campaign-copy p{font-size:10px}
+#app .marketplace-categories{gap:8px}
+.marketplace-categories button{flex:0 0 72px;min-width:72px;font-size:10px}
+.marketplace-categories button span{width:52px;height:48px;border-radius:13px}
+.marketplace-categories img{width:36px;height:36px}
+#app .modern-shortcuts{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+#app .modern-shortcuts button{min-height:64px;padding:5px}
+#app #promoGrid{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(135px,43%);grid-template-columns:none;overflow-x:auto;gap:9px;padding:3px 2px 10px}
+#app #homeProductGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px}
+#app #view-home .product-media{height:125px}
+#app .bottom-nav{border-radius:20px 20px 0 0;box-shadow:0 -4px 20px #102a4314;align-items:center;gap:2px}
+#app .bottom-nav button{min-width:0;font-size:9px;padding:3px 1px}
+#app .bottom-nav button[data-bottom="cart"] b{display:grid;place-items:center;background:#438c0f;color:#fff;border-radius:50%;width:48px;height:48px;margin-top:-18px;box-shadow:0 5px 12px #438c0f44}
+}
+</style>
 </head>
 <body class="auth-locked" data-app-name="Tem Aqui Itaíba" data-city="Itaíba">
 
@@ -376,7 +431,7 @@ body.auth-locked #app{visibility:hidden;pointer-events:none;user-select:none}
   <div class="topbar">
     <button class="icon-btn settings-menu-button" onclick="openSettingsCenter()" title="Abrir todas as configurações">☰</button>
     <a class="brand" href="#" onclick="navigate('home');return false"><img src="logo.svg" alt="Tem Aqui Itaíba"></a>
-    <a class="city-switch-button" href="https://tem-aqui-tupanatinga.discipulojonathas.workers.dev/" title="Abrir Tem Aqui Tupanatinga">📍 Tupanatinga</a>
+    
     <div class="global-search"><input id="globalSearch" placeholder="O que você está procurando?" autocomplete="off" enterkeyhint="search"><button class="voice-search-button" data-search-target="globalSearch" onpointerdown="startVoiceSearch(this,event)" onpointerup="stopVoiceSearch(this,event)" onpointercancel="stopVoiceSearch(this,event)" onkeydown="handleVoiceButtonKeyDown(this,event)" onkeyup="handleVoiceButtonKeyUp(this,event)" onclick="event.preventDefault()" oncontextmenu="return false" aria-label="Segure para pesquisar por voz" title="Segure para falar">🎙️</button><button class="btn btn-primary" onclick="searchProducts('globalSearch')">Buscar</button></div>
     <button class="icon-btn notification-badge-wrap" onclick="navigate('chat')" title="Chat">💬<span id="headerMessageCount" class="message-count empty">0</span></button>
     <button class="icon-btn cart-badge-wrap" onclick="navigate('cart')" title="Carrinho">🛒<span id="headerCartCount" class="cart-count empty">0</span></button>
@@ -430,6 +485,7 @@ body.auth-locked #app{visibility:hidden;pointer-events:none;user-select:none}
         <div id="homeCampaignCarousel" class="campaign-carousel modern-main-carousel"></div>
       </section>
 
+      <section class="marketplace-categories" aria-label="Categorias"><button type="button" onclick="selectHomeRailCategory('Mercado',event)"><span><img src="categoria-supermercado.webp" alt=""></span>Supermercado</button><button type="button" onclick="navigate('food')"><span><img src="categoria-food.webp" alt=""></span>Alimentação</button><button type="button" onclick="selectHomeRailCategory('Moda e Calçados',event)"><span><img src="categoria-moda.webp" alt=""></span>Moda</button><button type="button" onclick="selectHomeRailCategory('Eletrônicos',event)"><span><img src="categoria-eletronicos.webp" alt=""></span>Eletrônicos</button><button type="button" onclick="selectHomeRailCategory('Perfumaria e Beleza',event)"><span><img src="categoria-beleza.webp" alt=""></span>Beleza</button><button type="button" onclick="selectHomeRailCategory('Farmácia',event)"><span><img src="categoria-farmacia.webp" alt=""></span>Farmácia</button><button type="button" onclick="selectHomeRailCategory('Casa e Decoração',event)"><span><img src="categoria-casa.webp" alt=""></span>Casa</button><button type="button" onclick="selectHomeRailCategory('Frigoríficos e Açougues',event)"><span><img src="categoria-carnes.webp" alt=""></span>Carnes</button><button type="button" onclick="toggleHomeCategoryRail(event)"><span>▦</span>Mais categorias</button></section>
       <section id="homeFlashPromotion" class="home-flash-promotion" aria-label="Oferta com contagem regressiva"></section>
 
       <section class="modern-shortcuts" aria-label="Atalhos da página inicial">
@@ -439,7 +495,7 @@ body.auth-locked #app{visibility:hidden;pointer-events:none;user-select:none}
         <button onclick="homeSort='recent';document.getElementById('homeSort').value='recent';applyHomeFilters(true)"><span class="shortcut-icon new">NEW</span><b>Novidades</b><small>Ver agora</small></button>
       </section>
 
-      <section class="section"><div class="section-head"><div><h2>Promoções dos parceiros</h2><div class="section-sub">Ofertas em destaque dos comerciantes locais.</div></div><button class="see-all" onclick="showAllPromotions()">Ver todas →</button></div><div id="promoGrid" class="promo-grid"></div></section>
+      <section class="section"><div class="section-head"><div><h2>Ofertas em destaque</h2><div class="section-sub">Ofertas em destaque dos comerciantes locais.</div></div><button class="see-all" onclick="showAllPromotions()">Ver todas →</button></div><div id="promoGrid" class="promo-grid"></div></section>
 
       <section class="section" id="homeResults"><div class="section-head"><div><h2 id="homeResultTitle">Destaques para você</h2><div id="homeResultSub" class="section-sub">Produtos cadastrados pelos parceiros.</div></div><button class="see-all" onclick="clearHomeFilters();document.getElementById('homeResults').scrollIntoView({behavior:'smooth'})">Ver todos →</button></div><div class="sort-toolbar"><span class="sort-title">Filtrar e ordenar</span><label class="sort-control">Categoria <select id="homeCategoryFilter" onchange="applyHomeFilters()"><option value="all">Todas as categorias</option><option>Mercado</option><option>Food / Delivery</option><option>Moda e Calçados</option><option>Perfumaria e Beleza</option><option>Farmácia</option><option>Eletrônicos</option><option>Frigoríficos e Açougues</option><option>Casa e Decoração</option><option>Automotivo</option><option>Agro e Rural</option><option>Materiais de Construção</option><option>Serviços</option></select></label><label class="sort-control">Entrega <select id="homeDeliveryFilter" onchange="applyHomeFilters()"><option value="all">Todas</option><option value="free">Entrega grátis</option><option value="paid">Entrega com frete</option><option value="pickup">Somente retirada</option><option value="arrange">A combinar</option></select></label><label class="sort-control">Ordenar <select id="homeSort" onchange="applyHomeFilters()"><option value="relevance">Mais relevantes</option><option value="price-asc">Menor preço</option><option value="price-desc">Maior preço</option><option value="recent">Mais recentes</option><option value="popular">Mais procurados</option></select></label><button class="btn btn-soft" onclick="clearHomeFilters()">Limpar</button></div><div id="homeProductGrid" class="promo-grid modern-product-grid"></div></section>
 
