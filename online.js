@@ -700,7 +700,7 @@
     contactIndex.clear();
     const [catRes, storeRes, productRes, postRes, swapRes, cattleRes, campaignRes, flashRes] = await Promise.all([
       onlineClient.from('categories').select('*').eq('active', true).order('sort_order'),
-      onlineClient.from('stores').select('*').order('featured', { ascending: false }).order('created_at', { ascending: false }),
+      onlineClient.from('stores').select('*').is('deleted_at', null).order('featured', { ascending: false }).order('created_at', { ascending: false }),
       fetchAllProducts(),
       onlineClient.from('community_posts').select('*').order('created_at', { ascending: false }).limit(100),
       onlineClient.from('swap_listings').select('*').order('created_at', { ascending: false }).limit(100),
@@ -714,7 +714,7 @@
     });
 
     onlineCategories = catRes.data || [];
-    const stores = (storeRes.data || []).filter(row => cityMatches(row.city));
+    const stores = (storeRes.data || []).filter(row => !row.deleted_at && cityMatches(row.city));
     const cityStoreIds = new Set(stores.map(row => String(row.id)));
     const products = (productRes.data || []).filter(row => cityStoreIds.has(String(row.store_id)));
     postRes.data = (postRes.data || []).filter(row => cityMatches(row.city) || (row.store_id && cityStoreIds.has(String(row.store_id))));
@@ -733,7 +733,7 @@
     const publicFlash = onlineFlashPromotionRows.find(row => row.status === 'active' && (!row.starts_at || new Date(row.starts_at).getTime() <= now) && (!row.ends_at || new Date(row.ends_at).getTime() >= now));
     window.setHomeFlashPromotion?.(publicFlash ? {id:publicFlash.id,topBarTitle:publicFlash.top_bar_title,topBarMediaType:publicFlash.top_bar_media_type||'none',topBarMediaUrl:publicFlash.top_bar_media_url||'',title:publicFlash.title,subtitle:publicFlash.subtitle,partnerName:publicFlash.partner_name,imageUrl:publicFlash.image_url,productImageUrl:publicFlash.product_image_url,oldPrice:publicFlash.old_price,price:publicFlash.price,discountLabel:publicFlash.discount_label,buttonText:publicFlash.button_text,actionType:publicFlash.action_type,actionValue:publicFlash.action_value,startsAt:publicFlash.starts_at,endsAt:publicFlash.ends_at,status:publicFlash.status} : null);
 
-    state.stores = stores.length ? stores.map(s => {
+    state.stores = stores.map(s => {
       registerContact(s.name, 'Atendimento da loja', { userId: s.owner_id, storeId: s.id });
       return {
         id: s.id,
@@ -750,7 +750,7 @@
         foodEstimatedMinutes: Number(s.food_estimated_minutes || 0),
         foodOpen: s.food_open !== false
       };
-    }) : defaultState.stores;
+    });
 
     const mappedProducts = products.map(p => {
       const s = storeMap.get(p.store_id) || {};
