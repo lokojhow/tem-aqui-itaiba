@@ -1119,7 +1119,12 @@
     toast('Seu código de usuário foi copiado.');
   };
 
-  window.requestPartnership = async function () {
+  window.openFoodRegistration=async function(){
+if(needsLogin())return;
+const {data:terms,error}=await onlineClient.rpc('get_active_legal_terms_v1',{p_audience:'partner'});if(error)return toast(normalizeError(error));
+const d=document.createElement('dialog');d.style.cssText='width:min(94%,520px);max-height:90vh;overflow:auto;border:0;border-radius:16px;padding:20px';const fields=[['store_name','Nome do estabelecimento'],['legal_name','Nome completo'],['cpf','CPF'],['birth_date','Nascimento','date'],['whatsapp','WhatsApp'],['cep','CEP'],['address_line','Rua'],['address_number','Número'],['neighborhood','Bairro'],['cnpj','CNPJ (opcional)']];d.innerHTML='<form><h2>Cadastro Tem Aqui Food</h2><p>Dois meses gratuitos após aprovação.</p><label>Tipo<select name="business_type"><option>Pizzaria</option><option>Hamburgueria</option><option>Restaurante</option><option>Lanchonete</option><option>Marmitaria</option><option>Outro</option></select></label>'+fields.map(([k,l,t])=>'<div class="field"><label>'+l+'</label><input name="'+k+'" type="'+(t||'text')+'" '+(k==='cnpj'?'':'required')+'></div>').join('')+'<label><input type="checkbox" name="prepared" required> Declaro comercializar alimentos preparados.</label>'+terms.map(t=>'<details><summary>'+esc(t.title)+'</summary><p style="white-space:pre-wrap">'+esc(t.body)+'</p></details><label><input type="checkbox" required> Aceito '+esc(t.title)+'</label>').join('')+'<p><button class="btn btn-primary">Enviar cadastro</button> <button type="button" class="btn btn-soft" id="closeFoodReg">Cancelar</button></p></form>';document.body.appendChild(d);d.showModal();d.querySelector('#closeFoodReg').onclick=()=>d.close();d.onclose=()=>d.remove();d.querySelector('form').onsubmit=async e=>{e.preventDefault();const v=new FormData(e.target),p={};for(const [k] of fields)p['p_'+k]=v.get(k)||null;Object.assign(p,{p_business_type:v.get('business_type'),p_description:null,p_address_complement:null,p_city:'Itaíba',p_state:'PE',p_delivery_estimate:null,p_minimum_order:0,p_declares_prepared_food:true,p_term_ids:terms.map(t=>t.id),p_user_agent:navigator.userAgent});const b=e.target.querySelector('button');b.disabled=true;try{const {error}=await onlineClient.rpc('submit_food_partner_request_v71',p);if(error)throw error;d.close();toast('Cadastro enviado para aprovação.');}catch(err){toast(normalizeError(err));}finally{b.disabled=false;}};
+};
+window.requestPartnership = async function () {
     if (needsLogin()) return;
     const name = document.getElementById('requestStoreName')?.value.trim();
     const whatsapp = document.getElementById('requestWhatsapp')?.value.trim();
